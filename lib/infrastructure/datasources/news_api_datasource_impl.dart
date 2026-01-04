@@ -1,4 +1,5 @@
-/*import 'package:dio/dio.dart';
+import 'package:dio/dio.dart';
+import '/infrastructure/infrastructure.dart';
 import '/domain/domain.dart';
 import '/config/config.dart';
 
@@ -13,7 +14,7 @@ class NewsApiDatasourceImpl extends NewsRemoteDatasource {
   ));
 
   @override
-  Future<List<Article>> getArticleByCategory(NewsCategory category) async {
+  Future<List<Article>> getArticlesByCategory(NewsCategory category) async {
     final response = await dio.get('/top-headlines',
       queryParameters: {
         'category': category.name,
@@ -24,6 +25,7 @@ class NewsApiDatasourceImpl extends NewsRemoteDatasource {
     final List articlesJson = response.data['articles'];
 
     return articlesJson
-    .map((json) => ArticleM)
+    .map((json) => ArticleMapper.newsApiToEntity(ArticleModel.fromJson(json)))
+    .toList();
   }
-}*/
+}

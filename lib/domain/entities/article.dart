@@ -1,4 +1,4 @@
-import 'package:noticias/domain/entities/source.dart';
+import '/domain/domain.dart';
 
 class Article {
   final String id;

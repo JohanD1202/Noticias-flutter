@@ -1,4 +1,5 @@
 enum NewsCategory {
+  general,
   business,
   science,
   entertainment,

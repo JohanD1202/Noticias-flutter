@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:noticias/presentation/screens/new/home_screen.dart';
+import '/presentation/screens/screens.dart';
+import '/presentation/widgets/widgets.dart';
 
 
 final appRouter = GoRouter(
@@ -9,7 +10,7 @@ final appRouter = GoRouter(
       builder: (context, state, child) {
         return Scaffold(
           body: child,
-          bottomNavigationBar: Container(height: 20, width: 20, color: Colors.red)
+          bottomNavigationBar: BottomNavWrapper(state: state)
         );
       },
       routes: [
@@ -17,7 +18,12 @@ final appRouter = GoRouter(
           path: '/',
           name: HomeScreen.name,
           builder: (context, state) => const HomeScreen()
-        )
+        ),
+        GoRoute(
+          path: '/library',
+          name: LibraryScreen.name,
+          builder: (context, state) => const LibraryScreen()
+        ),
       ]
     )
   ]

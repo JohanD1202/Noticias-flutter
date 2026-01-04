@@ -7,7 +7,7 @@ class Article {
   final String description;
   final String content;
   final String url;
-  final String imageUrl;
+  final String urlToImage;
   final DateTime publishedAt;
   final Source source;
 
@@ -18,7 +18,7 @@ class Article {
     required this.description,
     required this.content,
     required this.url,
-    required this.imageUrl,
+    required this.urlToImage,
     required this.publishedAt,
     required this.source,
   });

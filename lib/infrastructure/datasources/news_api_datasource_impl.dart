@@ -9,7 +9,6 @@ class NewsApiDatasourceImpl extends NewsRemoteDatasource {
     baseUrl: 'https://newsapi.org/v2',
     queryParameters: {
       'apiKey': Environment.newsApiKey,
-
     },
   ));
 

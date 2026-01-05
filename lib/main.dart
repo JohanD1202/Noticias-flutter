@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:noticias/config/router/app_router.dart';
+import 'package:noticias/infrastructure/services/shared_preferences/theme_notifier_provider.dart';
+import 'config/config.dart';
 
 Future<void> main() async {
   await dotenv.load(fileName: ".env");
@@ -12,14 +13,23 @@ Future<void> main() async {
   );
 }
 
-class MainApp extends StatelessWidget {
+final themeNotifier = ThemeNotifier();
+final appTheme = AppTheme();
+
+class MainApp extends ConsumerWidget {
   const MainApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+
+    final currentMode = ref.watch(themeProvider);
+
     return MaterialApp.router(
       routerConfig: appRouter,
       debugShowCheckedModeBanner: false,
+      theme: appTheme.lightTheme(),
+      darkTheme: appTheme.darkTheme(),
+      themeMode: currentMode
     );
   }
 }

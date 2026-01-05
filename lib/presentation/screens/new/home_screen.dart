@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '/presentation/providers/providers.dart';
 import '/presentation/widgets/widgets.dart';
 
@@ -14,9 +16,31 @@ class HomeScreen extends ConsumerWidget {
     final category = ref.watch(selectedCategoryProvider);
     final articlesAsync = ref.watch(articleProvider(category));
 
+    final styleTitle = Theme.of(context).textTheme.titleLarge?.copyWith(
+      fontWeight: FontWeight.w600,
+      fontSize: 20
+    );
+    final styleIcon = Theme.of(context).iconTheme.color;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(category.name),
+        titleTextStyle: styleTitle,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: GestureDetector(
+              onTap: () {
+                context.push('/settings');
+              },
+              child: Icon(
+                LucideIcons.settings,
+                color: styleIcon,
+                size: 25,
+              ),
+            ),
+          )
+        ],
       ),
       body: Column(
         children: [
@@ -36,27 +60,7 @@ class HomeScreen extends ConsumerWidget {
                   itemBuilder: (context, index) {
                     final article = articles[index];
 
-                    return Card(
-                      margin: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 6,
-                      ),
-                      child: ListTile(
-                        leading: article.urlToImage.isNotEmpty
-                            ? Image.network(
-                                article.urlToImage,
-                                width: 80,
-                                fit: BoxFit.cover,
-                              )
-                            : const SizedBox(width: 80),
-                        title: Text(article.title),
-                        subtitle: Text(
-                          article.description,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    );
+                    return ArticleCard(article: article);
                   },
                 );
               },

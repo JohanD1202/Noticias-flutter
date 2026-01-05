@@ -4,17 +4,17 @@ extension TimeAgo on DateTime {
     final difference = now.difference(this);
 
     if (difference.inMinutes < 1) {
-      return 'Justo ahora';
+      return 'Right now';
     } else if (difference.inMinutes < 60) {
-      return 'Hace ${difference.inMinutes} min';
+      return '${difference.inMinutes} min ago';
     } else if (difference.inHours < 24) {
-      return 'Hace ${difference.inHours} h';
+      return '${difference.inHours} h ago';
     } else if (difference.inDays < 7) {
       return difference.inDays == 1
-        ? 'Hace 1 día'
-        : 'Hace ${difference.inDays} días';
+        ? '1 day ago'
+        : '${difference.inDays} days ago';
     } else {
-      return 'Hace ${(difference.inDays / 7).floor()} sem';
+      return '${(difference.inDays / 7).floor()} week';
     }
   }
 }

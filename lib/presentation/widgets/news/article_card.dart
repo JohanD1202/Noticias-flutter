@@ -1,61 +1,112 @@
 import 'package:flutter/material.dart';
-import 'package:noticias/config/constants/time_ago.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import 'package:noticias/presentation/widgets/widgets.dart';
 import '/domain/domain.dart';
 
 
 class ArticleCard extends StatelessWidget {
+
+  final Article article;
+
   const ArticleCard({
     super.key,
     required this.article,
   });
 
+  @override
+  Widget build(BuildContext context) {
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 6,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if(article.urlToImage.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.network(
+                      article.urlToImage,
+                      height: 180,
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(
+                    left: 10,
+                    right: 10,
+                    top: 5,
+                  ),
+                  child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        SourceInfo(article: article),
+                      ],
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      article.title,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    ArticleCardOptions(article: article),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+        Center(
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * .9,
+            child: const Divider(
+              height: 1,
+              thickness: 0.8
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class SourceInfo extends StatelessWidget {
+
   final Article article;
+
+  const SourceInfo({
+    super.key,
+    required this.article
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 6,
-      ),
-      child:  Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+
+    final styleIcon = Theme.of(context).iconTheme.color;
+
+    return Row(
       children: [
-        if (article.urlToImage.isNotEmpty)
-          Image.network(
-            article.urlToImage,
-            height: 180,
-            width: double.infinity,
-            fit: BoxFit.cover,
+        Icon(LucideIcons.globe, color: styleIcon),
+        const SizedBox(width: 5),
+        SizedBox(
+          width: 220,
+          child: Text(
+            article.source.name,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall,
           ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  article.title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 6),/*
-                Text(
-                  article.description,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 6),*/
-                Text(
-                  article.publishedAt.timeAgo(),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -48,7 +48,7 @@ class _SettingsView extends ConsumerWidget {
     return ListView(
       children: [
         ListTile(
-          title: Text("Modo Oscuro", style: styleText),
+          title: Text("Dark Mode", style: styleText),
           trailing: Switch(
             value: ref.watch(themeProvider) == ThemeMode.dark,
             onChanged: (_) => ref.read(themeProvider.notifier).toggle()

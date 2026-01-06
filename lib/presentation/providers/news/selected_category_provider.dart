@@ -5,7 +5,7 @@ import 'package:noticias/config/constants/news_category.dart';
 class SelectedCategoryNotifier extends Notifier<NewsCategory> {
   @override
   NewsCategory build() {
-    return NewsCategory.entertainment;
+    return NewsCategory.general;
   }
 
   void setCategory(NewsCategory category) {

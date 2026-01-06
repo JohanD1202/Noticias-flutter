@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import '/domain/domain.dart';
 
@@ -52,7 +53,12 @@ class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
           IconButton(
             icon: const Icon(LucideIcons.share2),
             onPressed: () {
-              // compartir
+              SharePlus.instance.share(
+                ShareParams(
+                  text: '${widget.article.title}\n\n${widget.article.url}',
+                  subject: widget.article.title
+                )
+              );
             },
           ),
         ],

@@ -24,7 +24,7 @@ class HomeScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(category.name),
+        title: const Text("Recent News"),
         titleTextStyle: styleTitle,
         actions: [
           Padding(

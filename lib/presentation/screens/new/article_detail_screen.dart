@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 import '/domain/domain.dart';
-import '/presentation/widgets/widgets.dart';
 
-
-class ArticleDetailScreen extends StatelessWidget {
+class ArticleDetailScreen extends StatefulWidget {
   static const name = 'detail-screen';
 
   final Article article;
@@ -15,86 +14,58 @@ class ArticleDetailScreen extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+  State<ArticleDetailScreen> createState() => _ArticleDetailScreenState();
+}
 
+class _ArticleDetailScreenState extends State<ArticleDetailScreen> {
+  late final WebViewController _controller;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (_) {
+            setState(() => _isLoading = false);
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.article.url));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: const BackButton(),
         actions: [
           IconButton(
             icon: const Icon(LucideIcons.bookmark),
             onPressed: () {
-              // guardar
+              // guardar noticia
             },
           ),
           IconButton(
             icon: const Icon(LucideIcons.share2),
             onPressed: () {
-              // compartir texto
+              // compartir
             },
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if(article.urlToImage.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Hero(
-                  tag: article.url,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      article.urlToImage,
-                      height: 220,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
+      body: Stack(
+        children: [
+          WebViewWidget(controller: _controller),
 
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SourceInfo(article: article),
-                  const SizedBox(height: 8),
-
-                  Text(
-                    article.title,
-                    style: textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  Text(
-                    article.description,
-                    style: textTheme.bodyMedium,
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: () {
-                        // abrir url externa
-                      },
-                      icon: const Icon(LucideIcons.externalLink),
-                      label: const Text('Leer en el sitio original'),
-                    ),
-                  )
-                ],
-              ),
+          if (_isLoading)
+            const Center(
+              child: CircularProgressIndicator(),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

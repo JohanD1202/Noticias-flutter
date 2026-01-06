@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:noticias/presentation/widgets/widgets.dart';
 import '/domain/domain.dart';
 
@@ -27,19 +28,23 @@ class ArticleWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if(article.urlToImage.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.all(10),
                     child: Hero(
                       tag: article.url,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          article.urlToImage,
-                          height: 180,
-                          width: MediaQuery.of(context).size.width * 0.9,
-                          fit: BoxFit.cover,
-                        ),
+                        child: article.urlToImage.isNotEmpty
+                        ? Image.network(
+                            article.urlToImage,
+                            height: 180,
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, _, _) {
+                              return _ImageFallbackArticle();
+                            },
+                          )
+                        : _ImageFallbackArticle()  
                       ),
                     ),
                   ),
@@ -66,6 +71,22 @@ class ArticleWidget extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ImageFallbackArticle extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 180,
+      width: MediaQuery.of(context).size.width * 0.9,
+      color: Colors.grey.shade300,
+      alignment: Alignment.center,
+      child: const Icon(
+        LucideIcons.imageOff,
+        size: 32,
       ),
     );
   }

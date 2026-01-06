@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '/presentation/widgets/widgets.dart';
 import '/domain/domain.dart';
 
@@ -29,17 +30,21 @@ class SecondaryArticleWidget extends StatelessWidget {
                   child: _InfoNew(article)
                 ),
                 const SizedBox(width: 10),
-                if(article.urlToImage.isNotEmpty)
                 Hero(
                   tag: article.url,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      article.urlToImage,
-                      height: 100,
-                      width: 100,
-                      fit: BoxFit.cover,
-                    ),
+                    child: article.urlToImage.isNotEmpty
+                    ? Image.network(
+                        article.urlToImage,
+                        height: 100,
+                        width: 100,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) {
+                          return _ImageFallbackSecondaryArticle();
+                        },
+                      )
+                      : _ImageFallbackSecondaryArticle()
                   ),
                 ),
               ],
@@ -73,6 +78,22 @@ class _InfoNew extends StatelessWidget {
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ],
+    );
+  }
+}
+
+class _ImageFallbackSecondaryArticle extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 100,
+      width: 100,
+      color: Colors.grey.shade300,
+      alignment: Alignment.center,
+      child: const Icon(
+        LucideIcons.imageOff,
+        size: 32,
+      ),
     );
   }
 }

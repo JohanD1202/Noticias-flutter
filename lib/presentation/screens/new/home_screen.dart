@@ -62,8 +62,18 @@ class HomeScreen extends ConsumerWidget {
                     final pattern = index % 3;
 
                     final widget = pattern == 0
-                      ? ArticleWidget(article: article)
-                      : SecondaryArticleWidget(article: article);
+                      ? ArticleWidget(
+                          article: article,
+                          onTap: () {
+                            context.push('/detail', extra: article);
+                          },
+                        )
+                      : SecondaryArticleWidget(
+                          article: article,
+                          onTap: () {
+                            context.push('/detail', extra: article);
+                          },
+                        );
                     return Column(
                       children: [
                         widget,

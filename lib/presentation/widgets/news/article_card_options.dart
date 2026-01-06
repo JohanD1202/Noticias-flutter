@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:share_plus/share_plus.dart';
 import '/domain/domain.dart';
 import '/config/config.dart';
 
@@ -34,7 +35,12 @@ class ArticleCardOptions extends StatelessWidget {
             if (value == 'save') {
               // guardar para más tarde
             } else if (value == 'share') {
-              // compartir solo el texto
+              SharePlus.instance.share(
+                ShareParams(
+                  text: '${article.title}\n\n${article.url}',
+                  subject: article.title
+                )
+              );
             }
           },
           itemBuilder: (context) => [
@@ -44,7 +50,7 @@ class ArticleCardOptions extends StatelessWidget {
                 children: [
                   Icon(LucideIcons.bookmark, color: styleIcon),
                   const SizedBox(width: 8),
-                  Text('Guardar para más tarde', style: styleText),
+                  Text('Save for later', style: styleText),
                 ],
               ),
             ),
@@ -54,7 +60,7 @@ class ArticleCardOptions extends StatelessWidget {
                 children: [
                   Icon(LucideIcons.share2, color: styleIcon),
                   const SizedBox(width: 8),
-                  Text("Compartir", style: styleText)
+                  Text("Share", style: styleText)
                 ],
               )
             ),

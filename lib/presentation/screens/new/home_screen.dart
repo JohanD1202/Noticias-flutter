@@ -23,7 +23,7 @@ class HomeScreen extends ConsumerWidget {
     final styleIcon = Theme.of(context).iconTheme.color;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: const Text("Recent News"),
         titleTextStyle: styleTitle,

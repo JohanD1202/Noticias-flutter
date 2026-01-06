@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:noticias/domain/domain.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '/presentation/widgets/widgets.dart';
+import '/presentation/providers/providers.dart';
 
 
 class LibraryScreen extends StatelessWidget {
@@ -17,41 +18,63 @@ class LibraryScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text("Library", style: styleTitle),
       ),
-      body: const _LibraryView(),
+      body: const _SavedNewsWidget(),
     );
   }
 }
 
-class _LibraryView extends StatelessWidget {
-  const _LibraryView();
+class _SavedNewsWidget extends ConsumerWidget {
+  const _SavedNewsWidget();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
 
     final styleTitle = Theme.of(context).textTheme.titleLarge?.copyWith(
       fontWeight: FontWeight.w600,
       fontSize: 18
     );
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 22),
-              child: Text("Saved News", style: styleTitle),
+    final savedArticles = ref.watch(savedArticlesProvider);
+
+    if(savedArticles.isEmpty) {
+      return const Center(
+        child: Text("No saved news yet"),
+      );
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(left: 22),
+            child: Text("Saved News", style: styleTitle),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: ListView.separated(
+              itemCount: savedArticles.length,
+              itemBuilder: (_, index) {
+                return ArticleWidget(article: savedArticles[index]);
+              },
+              separatorBuilder: (context, index) {
+                return Center(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * .9,
+                    child: const Divider(
+                      height: 1,
+                      thickness: 0.8,
+                    ),
+                  ),
+                );
+              },
             ),
-            const SizedBox(height: 10),
-            ArticleWidget(article: Article(id: '', title: 'Hola mundo', author: 'author', description: 'new description', content: '', url: '123', urlToImage: '', publishedAt: DateTime(2026, 1, 5, 10, 30), source: Source(id: '', name: 'BBC'))),
-            ArticleWidget(article: Article(id: '', title: 'Hola mundo', author: 'author', description: 'new description', content: '', url: '321', urlToImage: '', publishedAt: DateTime(2026, 1, 5, 10, 30), source: Source(id: '', name: 'BBC'))),
-            const _ManageSavedNews()
-          ],
-        ),
+          ),
+          const _ManageSavedNews()
+        ],
       ),
     );
   }

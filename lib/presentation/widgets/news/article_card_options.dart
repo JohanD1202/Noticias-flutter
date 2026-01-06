@@ -28,7 +28,7 @@ class ArticleCardOptions extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          isSaved ? 'Removed from library' : 'Saved to library',
+          isSaved ? 'Removed from saved' : 'Saved to later',
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface,
           ),
@@ -94,7 +94,7 @@ class ArticleCardOptions extends ConsumerWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    isSaved ? 'Remove from library' : 'Save for later',
+                    isSaved ? 'Remove from saved' : 'Save for later',
                     style: styleText,
                   ),
                 ],

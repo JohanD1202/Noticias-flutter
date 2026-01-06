@@ -52,7 +52,7 @@ class _ArticleDetailScreenState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          isSaved ? 'Removed from library' : 'Saved to library',
+          isSaved ? 'Removed from saved' : 'Saved to later',
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface,
           ),

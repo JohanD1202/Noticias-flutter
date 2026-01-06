@@ -14,7 +14,7 @@ class BottomNavWrapper extends StatelessWidget {
     final location = state.uri.toString();
 
     if(location == '/') return 0;
-    if(location == '/library') return 1;
+    if(location == '/saved-news') return 1;
 
     return 0;
   }
@@ -29,7 +29,7 @@ class BottomNavWrapper extends StatelessWidget {
             context.go('/');
             break;
           case 1:
-            context.go('/library');
+            context.go('/saved-news');
             break;
         }
       },
@@ -66,7 +66,7 @@ class _NewBottomNavigationBar extends StatelessWidget {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(LucideIcons.library),
+            icon: Icon(LucideIcons.bookmark),
             label: '',
           ),
         ],

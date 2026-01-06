@@ -4,10 +4,10 @@ import '/presentation/widgets/widgets.dart';
 import '/presentation/providers/providers.dart';
 
 
-class LibraryScreen extends StatelessWidget {
-  static const name = "library-screen";
+class SavedNewsScreen extends StatelessWidget {
+  static const name = "saved-news-screen";
 
-  const LibraryScreen({super.key});
+  const SavedNewsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,7 @@ class LibraryScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title: Text("Library", style: styleTitle),
+        title: Text("Saved News", style: styleTitle),
       ),
       body: const _SavedNewsWidget(),
     );
@@ -33,10 +33,6 @@ class _SavedNewsWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final styleTitle = Theme.of(context).textTheme.titleLarge?.copyWith(
-      fontWeight: FontWeight.w600,
-      fontSize: 18
-    );
     final savedArticles = ref.watch(savedArticlesProvider);
 
     if(savedArticles.isEmpty) {
@@ -49,16 +45,11 @@ class _SavedNewsWidget extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 22),
-            child: Text("Saved News", style: styleTitle),
-          ),
-          const SizedBox(height: 10),
           Expanded(
             child: ListView.separated(
               itemCount: savedArticles.length,
               itemBuilder: (_, index) {
-                return ArticleWidget(article: savedArticles[index]);
+                return SecondaryArticleWidget(article: savedArticles[index]);
               },
               separatorBuilder: (context, index) {
                 return Center(
@@ -73,26 +64,8 @@ class _SavedNewsWidget extends ConsumerWidget {
               },
             ),
           ),
-          const _ManageSavedNews()
         ],
       ),
-    );
-  }
-}
-
-class _ManageSavedNews extends StatelessWidget {
-  const _ManageSavedNews();
-
-  @override
-  Widget build(BuildContext context) {
-
-    final styleText = Theme.of(context).textTheme.bodyLarge;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Center(
-        child: Text("View all and manage", style: styleText)
-      )
     );
   }
 }

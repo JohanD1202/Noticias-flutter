@@ -59,8 +59,25 @@ class HomeScreen extends ConsumerWidget {
                   itemCount: articles.length,
                   itemBuilder: (context, index) {
                     final article = articles[index];
+                    final pattern = index % 3;
 
-                    return ArticleCard(article: article);
+                    final widget = pattern == 0
+                      ? ArticleWidget(article: article)
+                      : SecondaryArticleWidget(article: article);
+                    return Column(
+                      children: [
+                        widget,
+                        Center(
+                          child: SizedBox(
+                            width: MediaQuery.of(context).size.width * .9,
+                            child: const Divider(
+                              height: 1,
+                              thickness: 0.8,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
                   },
                 );
               },

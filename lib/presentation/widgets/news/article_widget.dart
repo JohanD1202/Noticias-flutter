@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:noticias/presentation/widgets/widgets.dart';
 import '/domain/domain.dart';
 
 
-class ArticleCard extends StatelessWidget {
+class ArticleWidget extends StatelessWidget {
 
   final Article article;
 
-  const ArticleCard({
+  const ArticleWidget({
     super.key,
     required this.article,
   });
@@ -20,10 +19,7 @@ class ArticleCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 6,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -49,11 +45,7 @@ class ArticleCard extends StatelessWidget {
                   child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        SourceInfo(article: article),
-                      ],
-                    ),
+                    SourceInfo(article: article),
                     const SizedBox(height: 5),
                     Text(
                       article.title,
@@ -66,48 +58,9 @@ class ArticleCard extends StatelessWidget {
             ],
           ),
         ),
-        Center(
-          child: SizedBox(
-            width: MediaQuery.of(context).size.width * .9,
-            child: const Divider(
-              height: 1,
-              thickness: 0.8
-            ),
-          ),
-        ),
       ],
     );
   }
 }
 
-class SourceInfo extends StatelessWidget {
-
-  final Article article;
-
-  const SourceInfo({
-    super.key,
-    required this.article
-  });
-
-  @override
-  Widget build(BuildContext context) {
-
-    final styleIcon = Theme.of(context).iconTheme.color;
-
-    return Row(
-      children: [
-        Icon(LucideIcons.globe, color: styleIcon),
-        const SizedBox(width: 5),
-        SizedBox(
-          width: 220,
-          child: Text(
-            article.source.name,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ),
-      ],
-    );
-  }
-}
 

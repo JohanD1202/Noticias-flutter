@@ -22,7 +22,7 @@ class CategorySelector extends ConsumerWidget {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 6),
             child: ChoiceChip(
-              label: Text(category.name),
+              label: Text(category.label),
               selected: isSelected,
               onSelected: (_) {
                 ref

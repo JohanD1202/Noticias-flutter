@@ -22,9 +22,9 @@ final appRouter = GoRouter(
           builder: (context, state) => const HomeScreen()
         ),
         GoRoute(
-          path: '/library',
-          name: LibraryScreen.name,
-          builder: (context, state) => const LibraryScreen()
+          path: '/saved-news',
+          name: SavedNewsScreen.name,
+          builder: (context, state) => const SavedNewsScreen()
         ),
         GoRoute(
           path: '/settings',

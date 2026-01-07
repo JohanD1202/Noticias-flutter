@@ -6,4 +6,5 @@ abstract class SavedArticleDatasource {
   Future<void> deleteByUrl(String url);
   Future<List<SavedArticle>> getAll();
   Future<bool> exists(String url);
+  Stream<List<SavedArticle>> watchAll();
 }

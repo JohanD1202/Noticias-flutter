@@ -1,33 +1,44 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '/presentation/widgets/widgets.dart';
+import '/presentation/providers/providers.dart';
 import '/domain/domain.dart';
 
 
-class SecondaryArticleWidget extends StatelessWidget {
-
+class SecondaryArticleWidget extends ConsumerWidget {
   final Article article;
   final VoidCallback? onTap;
 
   const SecondaryArticleWidget({
     super.key,
     required this.article,
-    this.onTap
+    this.onTap,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 🔑 estado derivado correcto (Isar + Stream)
+    final isSaved = ref.watch(
+      isArticleSavedProvider(article),
+    );
+
     return GestureDetector(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.only(left: 22, right: 22, top: 16, bottom: 6),
+        padding: const EdgeInsets.only(
+          left: 22,
+          right: 22,
+          top: 16,
+          bottom: 6,
+        ),
         child: Column(
           children: [
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: _InfoNew(article)
+                  child: _InfoNew(article),
                 ),
                 const SizedBox(width: 10),
                 Hero(
@@ -35,21 +46,25 @@ class SecondaryArticleWidget extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
                     child: article.urlToImage.isNotEmpty
-                    ? Image.network(
-                        article.urlToImage,
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, _, _) {
-                          return _ImageFallbackSecondaryArticle();
-                        },
-                      )
-                      : _ImageFallbackSecondaryArticle()
+                        ? Image.network(
+                            article.urlToImage,
+                            height: 100,
+                            width: 100,
+                            fit: BoxFit.cover,
+                            errorBuilder: (_, __, ___) {
+                              return const _ImageFallbackSecondaryArticle();
+                            },
+                          )
+                        : const _ImageFallbackSecondaryArticle(),
                   ),
                 ),
               ],
             ),
-            ArticleCardOptions(article: article)
+            const SizedBox(height: 6),
+            ArticleCardOptions(
+              article: article,
+              isSaved: isSaved,
+            ),
           ],
         ),
       ),
@@ -58,14 +73,12 @@ class SecondaryArticleWidget extends StatelessWidget {
 }
 
 class _InfoNew extends StatelessWidget {
-
   final Article article;
 
   const _InfoNew(this.article);
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -83,6 +96,8 @@ class _InfoNew extends StatelessWidget {
 }
 
 class _ImageFallbackSecondaryArticle extends StatelessWidget {
+  const _ImageFallbackSecondaryArticle();
+
   @override
   Widget build(BuildContext context) {
     return Container(

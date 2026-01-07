@@ -24,4 +24,9 @@ class SavedArticleRepositoryImpl implements SavedArticleRepository {
   Future<bool> exists(String url) {
     return datasource.exists(url);
   }
+  
+  @override
+  Stream<List<SavedArticle>> watchAll() {
+    return datasource.watchAll();
+  }
 }

@@ -41,4 +41,12 @@ class SavedArticleDatasourceImpl implements SavedArticleDatasource {
             .findFirst() !=
         null;
   }
+  
+  @override
+  Stream<List<SavedArticle>> watchAll() async* {
+    final isar = await IsarService.getInstance();
+    yield* isar.savedArticles
+        .where()
+        .watch(fireImmediately: true);
+  }
 }

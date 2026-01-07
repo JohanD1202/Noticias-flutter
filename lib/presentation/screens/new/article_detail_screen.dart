@@ -6,6 +6,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import '/domain/domain.dart';
 import '/presentation/providers/providers.dart';
 
+
 class ArticleDetailScreen extends ConsumerStatefulWidget {
   static const name = 'detail-screen';
 
@@ -23,7 +24,6 @@ class ArticleDetailScreen extends ConsumerStatefulWidget {
 
 class _ArticleDetailScreenState
     extends ConsumerState<ArticleDetailScreen> {
-
   late final WebViewController _controller;
   bool _isLoading = true;
 
@@ -36,30 +36,38 @@ class _ArticleDetailScreenState
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (_) {
-            setState(() => _isLoading = false);
+            if (mounted) {
+              setState(() => _isLoading = false);
+            }
           },
         ),
       )
       ..loadRequest(Uri.parse(widget.article.url));
   }
 
-  void _toggleSave(BuildContext context, bool isSaved) {
+  Future<void> _toggleSave(
+    BuildContext context,
+    bool isSaved,
+  ) async {
     final actions = ref.read(savedArticleActionsProvider);
     final theme = Theme.of(context);
 
-    actions.toggleSave(widget.article);
+    // 🔑 esperar la operación async
+    await actions.toggleSave(widget.article);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          isSaved ? 'Removed from saved' : 'Saved to later',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface,
+    ScaffoldMessenger.of(context)
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            isSaved ? 'Removed from saved' : 'Saved for later',
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
           ),
+          backgroundColor: theme.scaffoldBackgroundColor,
         ),
-        backgroundColor: theme.scaffoldBackgroundColor,
-      ),
-    );
+      );
   }
 
   void _shareArticle() {
@@ -73,7 +81,6 @@ class _ArticleDetailScreenState
 
   @override
   Widget build(BuildContext context) {
-
     final isSaved = ref.watch(
       isArticleSavedProvider(widget.article),
     );
@@ -100,7 +107,6 @@ class _ArticleDetailScreenState
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
-
           if (_isLoading)
             const Center(
               child: CircularProgressIndicator(),

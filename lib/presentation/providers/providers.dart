@@ -1,6 +1,7 @@
-export 'news/saved_articles_actions_provider.dart';
 export 'news/article_provider.dart';
 export 'news/article_repository_provider.dart';
 export 'news/selected_category_provider.dart';
-export 'news/saved_articles_provider.dart';
-export 'news/is_article_saved_provider.dart';
+export 'db/saved_articles_provider_isar.dart';
+export 'db/saved_article_actions_provider.dart';
+export 'db/saved_articles_actions.dart';
+export 'db/is_article_saved_provider.dart';

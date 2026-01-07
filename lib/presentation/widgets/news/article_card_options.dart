@@ -1,52 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:noticias/presentation/providers/providers.dart';
 import 'package:share_plus/share_plus.dart';
+import '/presentation/providers/providers.dart';
 import '/domain/domain.dart';
 import '/config/config.dart';
 
-class ArticleCardOptions extends ConsumerWidget {
 
+class ArticleCardOptions extends ConsumerWidget {
   final Article article;
+  final bool isSaved;
 
   const ArticleCardOptions({
     super.key,
     required this.article,
+    required this.isSaved,
   });
 
-  void _toggleSave({
+  Future<void> _toggleSave({
     required BuildContext context,
     required WidgetRef ref,
-    required bool isSaved,
-  }) {
+  }) async {
     final actions = ref.read(savedArticleActionsProvider);
+    final messenger = ScaffoldMessenger.of(context);
     final theme = Theme.of(context);
 
-    actions.toggleSave(article);
+    await actions.toggleSave(article);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          isSaved ? 'Removed from saved' : 'Saved to later',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            color: theme.colorScheme.onSurface,
+    final message = isSaved ? 'Removed from saved' : 'Saved for later';
+
+    messenger
+      ..clearSnackBars()
+      ..showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
           ),
+          backgroundColor: theme.scaffoldBackgroundColor,
         ),
-        backgroundColor: theme.scaffoldBackgroundColor,
-      ),
-    );
+      );
   }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final theme = Theme.of(context);
     final styleIcon = theme.iconTheme.color;
     final styleText = theme.textTheme.bodySmall;
-
-    final isSaved = ref.watch(savedArticlesProvider)
-        .any((a) => a.url == article.url);
 
     return Row(
       children: [
@@ -55,7 +57,6 @@ class ArticleCardOptions extends ConsumerWidget {
           style: styleText,
         ),
         const Spacer(),
-
         PopupMenuButton<_ArticleOption>(
           icon: Icon(
             LucideIcons.moreVertical,
@@ -67,7 +68,6 @@ class ArticleCardOptions extends ConsumerWidget {
                 _toggleSave(
                   context: context,
                   ref: ref,
-                  isSaved: isSaved,
                 );
                 break;
 
@@ -94,7 +94,9 @@ class ArticleCardOptions extends ConsumerWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    isSaved ? 'Remove from saved' : 'Save for later',
+                    isSaved
+                        ? 'Remove from saved'
+                        : 'Save for later',
                     style: styleText,
                   ),
                 ],
@@ -104,9 +106,15 @@ class ArticleCardOptions extends ConsumerWidget {
               value: _ArticleOption.share,
               child: Row(
                 children: [
-                  Icon(LucideIcons.share2, color: styleIcon),
+                  Icon(
+                    LucideIcons.share2,
+                    color: styleIcon,
+                  ),
                   const SizedBox(width: 8),
-                  Text('Share', style: styleText),
+                  Text(
+                    'Share',
+                    style: styleText,
+                  ),
                 ],
               ),
             ),
@@ -118,4 +126,3 @@ class ArticleCardOptions extends ConsumerWidget {
 }
 
 enum _ArticleOption { save, share }
-

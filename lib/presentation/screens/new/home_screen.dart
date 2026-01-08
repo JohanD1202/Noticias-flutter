@@ -99,7 +99,7 @@ class HomeScreen extends ConsumerWidget {
                 );
               },
               loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+                  const Center(child: SkeletonNews()),
               error: (error, _) =>
                   Center(child: Text('Error: $error')),
             ),

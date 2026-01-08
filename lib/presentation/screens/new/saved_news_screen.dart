@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '/presentation/widgets/widgets.dart';
 import '/presentation/providers/providers.dart';
 import '/infrastructure/infrastructure.dart';
@@ -60,7 +61,10 @@ class _SavedNewsWidget extends ConsumerWidget {
                 savedArticles[index]
               );
               return SecondaryArticleWidget(
-                article: article
+                article: article,
+                onTap: () {
+                  context.push('/detail', extra: article);
+                },
               );
             },
             separatorBuilder: (context, index) {

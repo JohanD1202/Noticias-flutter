@@ -18,7 +18,6 @@ class SecondaryArticleWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // 🔑 estado derivado correcto (Isar + Stream)
     final isSaved = ref.watch(
       isArticleSavedProvider(article),
     );
@@ -51,7 +50,7 @@ class SecondaryArticleWidget extends ConsumerWidget {
                             height: 100,
                             width: 100,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, __, ___) {
+                            errorBuilder: (_, _, _) {
                               return const _ImageFallbackSecondaryArticle();
                             },
                           )

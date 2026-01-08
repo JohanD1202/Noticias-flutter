@@ -50,12 +50,12 @@ class _ArticleDetailScreenState
     bool isSaved,
   ) async {
     final actions = ref.read(savedArticleActionsProvider);
+    final messenger = ScaffoldMessenger.of(context);
     final theme = Theme.of(context);
 
-    // 🔑 esperar la operación async
     await actions.toggleSave(widget.article);
 
-    ScaffoldMessenger.of(context)
+    messenger
       ..clearSnackBars()
       ..showSnackBar(
         SnackBar(

@@ -22,6 +22,7 @@ class HomeScreen extends ConsumerWidget {
     );
     final styleIcon = Theme.of(context).iconTheme.color;
 
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -32,10 +33,10 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(right: 20),
             child: GestureDetector(
               onTap: () {
-                context.push('/settings');
+
               },
               child: Icon(
-                LucideIcons.settings,
+                LucideIcons.search,
                 color: styleIcon,
                 size: 25,
               ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import '/presentation/widgets/widgets.dart';
 import '/presentation/providers/providers.dart';
 import '/infrastructure/infrastructure.dart';
@@ -14,14 +15,30 @@ class SavedNewsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final styleTitle = Theme.of(context).textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.w600,
-          fontSize: 20,
-        );
+      fontWeight: FontWeight.w600,
+      fontSize: 20,
+    );
+    final styleIcon = Theme.of(context).iconTheme.color;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
         title: Text("Saved News", style: styleTitle),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: GestureDetector(
+              onTap: () {
+                context.push('/settings');
+              },
+              child: Icon(
+                LucideIcons.settings,
+                color: styleIcon,
+                size: 25,
+              ),
+            ),
+          )
+        ],
       ),
       body: const _SavedNewsWidget(),
     );
@@ -46,7 +63,7 @@ class _SavedNewsWidget extends ConsumerWidget {
         ),
       ),
       data: (savedArticles) {
-        if (savedArticles.isEmpty) {
+        if(savedArticles.isEmpty) {
           return const Center(
             child: Text("No saved news yet"),
           );

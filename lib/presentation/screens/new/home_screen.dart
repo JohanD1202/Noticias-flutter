@@ -50,50 +50,56 @@ class HomeScreen extends ConsumerWidget {
           Expanded(
             child: articlesAsync.when(
               data: (articles) {
-                if (articles.isEmpty) {
+                if(articles.isEmpty) {
                   return const Center(
                     child: Text('No hay noticias disponibles.'),
                   );
                 }
 
-                return ListView.builder(
-                  itemCount: articles.length,
-                  itemBuilder: (context, index) {
-                    final article = articles[index];
-                    final pattern = index % 3;
-
-                    final widget = pattern == 0
-                      ? ArticleWidget(
-                          article: article,
-                          onTap: () {
-                            context.push('/detail', extra: article);
-                          },
-                        )
-                      : SecondaryArticleWidget(
-                          article: article,
-                          onTap: () {
-                            context.push('/detail', extra: article);
-                          },
-                        );
-                    return Column(
-                      children: [
-                        widget,
-                        Center(
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * .9,
-                            child: const Divider(
-                              height: 1,
-                              thickness: 0.8,
+                return RefreshIndicator(
+                  onRefresh: () async {
+                    ref.invalidate(articleProvider(category));
+                  },
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    itemCount: articles.length,
+                    itemBuilder: (context, index) {
+                      final article = articles[index];
+                      final pattern = index % 3;
+                  
+                      final widget = pattern == 0
+                        ? ArticleWidget(
+                            article: article,
+                            onTap: () {
+                              context.push('/detail', extra: article);
+                            },
+                          )
+                        : SecondaryArticleWidget(
+                            article: article,
+                            onTap: () {
+                              context.push('/detail', extra: article);
+                            },
+                          );
+                      return Column(
+                        children: [
+                          widget,
+                          Center(
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * .9,
+                              child: const Divider(
+                                height: 1,
+                                thickness: 0.8,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                        ],
+                      );
+                    },
+                  ),
                 );
               },
               loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+                  const Center(child: SkeletonNews()),
               error: (error, _) =>
                   Center(child: Text('Error: $error')),
             ),

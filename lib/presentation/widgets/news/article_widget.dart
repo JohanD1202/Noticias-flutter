@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:noticias/presentation/widgets/widgets.dart';
+import '/presentation/widgets/widgets.dart';
 import '/presentation/providers/providers.dart';
 import '/domain/domain.dart';
 

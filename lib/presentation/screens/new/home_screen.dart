@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:noticias/presentation/delegates/search_new_delegate.dart';
+import '/domain/domain.dart';
 import '/presentation/providers/providers.dart';
 import '/presentation/widgets/widgets.dart';
 
@@ -33,7 +35,18 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(right: 20),
             child: GestureDetector(
               onTap: () {
+                final newRepository = ref.read(articleRepositoryProvider);
 
+                showSearch<Article?>(
+                  context: context,
+                  delegate: SearchNewDelegate(
+                    searchNews: newRepository.searchNews
+                  )
+                ).then((article) {
+                  if(article == null) return;
+
+                  context.push('/detail', extra: article);
+                });
               },
               child: Icon(
                 LucideIcons.search,
@@ -53,7 +66,7 @@ class HomeScreen extends ConsumerWidget {
               data: (articles) {
                 if(articles.isEmpty) {
                   return const Center(
-                    child: Text('No hay noticias disponibles.'),
+                    child: Text('No news available.'),
                   );
                 }
 

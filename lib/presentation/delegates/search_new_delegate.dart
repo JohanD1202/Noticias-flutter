@@ -12,12 +12,15 @@ class SearchNewDelegate extends SearchDelegate<Article?> {
   final SearchArticlesCallback searchArticles;
     List<Article> initialArticles;
     StreamController<List<Article>> debouncedArticles = StreamController.broadcast();
+    StreamController<bool> isLoadingStream = StreamController.broadcast();
     Timer? _debounceTimer;
 
   SearchNewDelegate({
     required this.searchArticles,
     required this.initialArticles
-  });
+  }):super(
+    searchFieldLabel: 'Search News'
+  );
 
   void clearStreams() {
     debouncedArticles.close();
@@ -25,27 +28,65 @@ class SearchNewDelegate extends SearchDelegate<Article?> {
 
   void _onQueryChanged(String query) {
 
+    isLoadingStream.add(true);
+
     if(_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
 
     _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
       final articles = await searchArticles(query: query);
       initialArticles = articles;
       debouncedArticles.add(articles);
+      isLoadingStream.add(false);
     });
   }
 
-  @override
-  String get searchFieldLabel => 'Search News';
+  Widget buildResultsAndSuggestions() {
+    return StreamBuilder(
+      initialData: initialArticles,
+      stream: debouncedArticles.stream,
+      builder: (context, snapshot) {
+
+        final articles = snapshot.data ?? [];
+
+        return ListView.builder(
+          itemCount: articles.length,
+          itemBuilder: (context, index) => _NewItem(
+            article: articles[index],
+            onArticleSelected: (context, article) {
+              close(context, article);
+            }
+          )
+        );
+      },
+    );
+  }
 
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
-      FadeIn(
-        animate: query.isNotEmpty,
-        child: IconButton(
-          onPressed: () => query = '',
-          icon: const Icon(Icons.clear_rounded)
-        ),
+      StreamBuilder(
+        initialData: false,
+        stream: isLoadingStream.stream,
+        builder: (context, snapshot) {
+          if(snapshot.data ?? false) {
+            return SpinPerfect(
+              duration: const Duration(seconds: 1),
+              spins: 10,
+              infinite: true,
+              child: IconButton(
+                onPressed: () => query = '',
+                icon: const Icon(LucideIcons.refreshCcw)
+              ),
+            );
+          }
+          return FadeIn(
+            animate: query.isNotEmpty,
+            child: IconButton(
+              onPressed: () => query = '',
+              icon: const Icon(LucideIcons.x)
+            ),
+          );
+        },
       )
     ];
   }
@@ -63,32 +104,14 @@ class SearchNewDelegate extends SearchDelegate<Article?> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return const Text('buildResults');
+    return buildResultsAndSuggestions();
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
 
     _onQueryChanged(query);
-
-    return StreamBuilder(
-      stream: debouncedArticles.stream,
-      initialData: initialArticles,
-      builder: (context, snapshot) {
-
-        final articles = snapshot.data ?? [];
-
-        return ListView.builder(
-          itemCount: articles.length,
-          itemBuilder: (context, index) => _NewItem(
-            article: articles[index],
-            onArticleSelected: (context, article) {
-              close(context, article);
-            },
-          )
-        );
-      },
-    );
+    return buildResultsAndSuggestions();
   }
 }
 

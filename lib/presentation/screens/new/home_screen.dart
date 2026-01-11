@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:noticias/presentation/delegates/search_new_delegate.dart';
+import 'package:noticias/presentation/providers/search/search_articles_provider.dart';
+import '/domain/domain.dart';
 import '/presentation/providers/providers.dart';
 import '/presentation/widgets/widgets.dart';
 
@@ -22,6 +25,7 @@ class HomeScreen extends ConsumerWidget {
     );
     final styleIcon = Theme.of(context).iconTheme.color;
 
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
@@ -32,10 +36,25 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(right: 20),
             child: GestureDetector(
               onTap: () {
-                context.push('/settings');
+
+                final searchedArticles = ref.read(searchedArticlesProvider);
+                final searchQuery = ref.read(searchQueryProvider);
+
+                showSearch<Article?>(
+                  query: searchQuery,
+                  context: context,
+                  delegate: SearchNewDelegate(
+                    initialArticles: searchedArticles,
+                    searchArticles: ref.read(searchedArticlesProvider.notifier).searchArticlesByQuery
+                  )
+                ).then((article) {
+                  if(article == null) return;
+
+                  context.push('/detail', extra: article);
+                });
               },
               child: Icon(
-                LucideIcons.settings,
+                LucideIcons.search,
                 color: styleIcon,
                 size: 25,
               ),
@@ -52,7 +71,7 @@ class HomeScreen extends ConsumerWidget {
               data: (articles) {
                 if(articles.isEmpty) {
                   return const Center(
-                    child: Text('No hay noticias disponibles.'),
+                    child: Text('No news available.'),
                   );
                 }
 

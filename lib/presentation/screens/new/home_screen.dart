@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:noticias/presentation/delegates/search_new_delegate.dart';
+import 'package:noticias/presentation/providers/search/search_articles_provider.dart';
 import '/domain/domain.dart';
 import '/presentation/providers/providers.dart';
 import '/presentation/widgets/widgets.dart';
@@ -35,12 +36,16 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.only(right: 20),
             child: GestureDetector(
               onTap: () {
-                final newRepository = ref.read(articleRepositoryProvider);
+
+                final searchedArticles = ref.read(searchedArticlesProvider);
+                final searchQuery = ref.read(searchQueryProvider);
 
                 showSearch<Article?>(
+                  query: searchQuery,
                   context: context,
                   delegate: SearchNewDelegate(
-                    searchNews: newRepository.searchNews
+                    initialArticles: searchedArticles,
+                    searchArticles: ref.read(searchedArticlesProvider.notifier).searchArticlesByQuery
                   )
                 ).then((article) {
                   if(article == null) return;

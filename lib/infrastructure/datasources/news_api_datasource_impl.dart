@@ -30,6 +30,8 @@ class NewsApiDatasourceImpl extends NewsRemoteDatasource {
   
   @override
   Future<List<Article>> searchNews({required String query, int page = 1}) async {
+    if(query.isEmpty) return [];
+    
     final response = await dio.get('/everything',
       queryParameters: {
         'q': query,

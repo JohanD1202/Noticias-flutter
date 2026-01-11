@@ -1,19 +1,38 @@
+import 'dart:async';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import '/presentation/widgets/widgets.dart';
 import '/domain/domain.dart';
 
-typedef SearchNewsCallback = Future<List<Article>>Function({required String query, int page});
-
+typedef SearchArticlesCallback = Future<List<Article>>Function({required String query, int page});
 
 class SearchNewDelegate extends SearchDelegate<Article?> {
 
-  final SearchNewsCallback searchNews;
+  final SearchArticlesCallback searchArticles;
+    List<Article> initialArticles;
+    StreamController<List<Article>> debouncedArticles = StreamController.broadcast();
+    Timer? _debounceTimer;
 
   SearchNewDelegate({
-    required this.searchNews
+    required this.searchArticles,
+    required this.initialArticles
   });
+
+  void clearStreams() {
+    debouncedArticles.close();
+  }
+
+  void _onQueryChanged(String query) {
+
+    if(_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
+      final articles = await searchArticles(query: query);
+      initialArticles = articles;
+      debouncedArticles.add(articles);
+    });
+  }
 
   @override
   String get searchFieldLabel => 'Search News';
@@ -34,7 +53,10 @@ class SearchNewDelegate extends SearchDelegate<Article?> {
   @override
   Widget? buildLeading(BuildContext context) {
     return IconButton(
-      onPressed: () => close(context, null),
+      onPressed: () {
+        clearStreams();
+        close(context, null);
+      },
       icon: const Icon(Icons.arrow_back_ios_new_rounded)
     );
   }
@@ -46,9 +68,12 @@ class SearchNewDelegate extends SearchDelegate<Article?> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    return FutureBuilder(
-      future: searchNews(query: query),
-      initialData: const [],
+
+    _onQueryChanged(query);
+
+    return StreamBuilder(
+      stream: debouncedArticles.stream,
+      initialData: initialArticles,
       builder: (context, snapshot) {
 
         final articles = snapshot.data ?? [];
@@ -57,7 +82,9 @@ class SearchNewDelegate extends SearchDelegate<Article?> {
           itemCount: articles.length,
           itemBuilder: (context, index) => _NewItem(
             article: articles[index],
-            onArticleSelected: close,
+            onArticleSelected: (context, article) {
+              close(context, article);
+            },
           )
         );
       },
@@ -94,21 +121,21 @@ class _NewItem extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
-                        article.urlToImage,
-                        fit: BoxFit.cover,
-                        loadingBuilder: (context, child, loadingProgress) => FadeIn(child: child),
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey.shade300,
-                            alignment: Alignment.center,
-                            child: const Icon(
-                              LucideIcons.imageOff,
-                              size: 32,
-                              color: Colors.grey,
-                            ),
-                          );
-                        },
-                      )
+                  article.urlToImage,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (context, child, loadingProgress) => FadeIn(child: child),
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      color: Colors.grey.shade300,
+                      alignment: Alignment.center,
+                      child: const Icon(
+                        LucideIcons.imageOff,
+                        size: 32,
+                        color: Colors.grey,
+                      ),
+                    );
+                  },
+                )
               ),
             ),
             const SizedBox(width: 10),

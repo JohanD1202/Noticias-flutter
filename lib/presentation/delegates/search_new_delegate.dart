@@ -22,23 +22,30 @@ class SearchNewDelegate extends SearchDelegate<Article?> {
     searchFieldLabel: 'Search News'
   );
 
+  bool _isClosed = false;
+
   void clearStreams() {
+    _isClosed = true;
     debouncedArticles.close();
+    isLoadingStream.close();
   }
+
 
   void _onQueryChanged(String query) {
 
-    isLoadingStream.add(true);
+  if (!_isClosed) isLoadingStream.add(true);
 
-    if(_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
+  if(_debounceTimer?.isActive ?? false) _debounceTimer!.cancel();
 
-    _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
-      final articles = await searchArticles(query: query);
-      initialArticles = articles;
-      debouncedArticles.add(articles);
-      isLoadingStream.add(false);
-    });
-  }
+  _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
+    final articles = await searchArticles(query: query);
+    initialArticles = articles;
+    
+    if (!_isClosed) debouncedArticles.add(articles);
+    if (!_isClosed) isLoadingStream.add(false);
+  });
+}
+
 
   Widget buildResultsAndSuggestions() {
     return StreamBuilder(

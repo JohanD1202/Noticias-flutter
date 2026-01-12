@@ -153,7 +153,21 @@ class _NewItem extends StatelessWidget {
                 child: Image.network(
                   article.urlToImage,
                   fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) => FadeIn(child: child),
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if(loadingProgress == null) return FadeIn(child: child);
+                    return SizedBox(
+                      height: size.height * .11,
+                      width: size.width * .3,
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  (loadingProgress.expectedTotalBytes ?? 1)
+                              : null,
+                        ),
+                      ),
+                    );
+                  },
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       color: Colors.grey.shade300,

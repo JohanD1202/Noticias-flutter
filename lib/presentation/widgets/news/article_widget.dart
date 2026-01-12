@@ -49,9 +49,8 @@ class ArticleWidget extends ConsumerWidget {
                               height: 180,
                               width: MediaQuery.of(context).size.width * 0.9,
                               fit: BoxFit.cover,
-                              // Muestra progreso mientras carga
                               loadingBuilder: (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
+                                if(loadingProgress == null) return child;
                                 return SizedBox(
                                   height: 180,
                                   width: MediaQuery.of(context).size.width * 0.9,

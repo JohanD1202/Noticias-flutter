@@ -49,12 +49,27 @@ class ArticleWidget extends ConsumerWidget {
                               height: 180,
                               width: MediaQuery.of(context).size.width * 0.9,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, _, _) {
-                                return const _ImageFallbackArticle();
+                              // Muestra progreso mientras carga
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return SizedBox(
+                                  height: 180,
+                                  width: MediaQuery.of(context).size.width * 0.9,
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      value: loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress.cumulativeBytesLoaded /
+                                              (loadingProgress.expectedTotalBytes ?? 1)
+                                          : null,
+                                    ),
+                                  ),
+                                );
                               },
+                              errorBuilder: (_, _, _) => const _ImageFallbackArticle(),
                             )
                           : const _ImageFallbackArticle(),
                     ),
+
                   ),
                 ),
 

@@ -50,9 +50,23 @@ class SecondaryArticleWidget extends ConsumerWidget {
                             height: 100,
                             width: 100,
                             fit: BoxFit.cover,
-                            errorBuilder: (_, _, _) {
-                              return const _ImageFallbackSecondaryArticle();
+                            // Muestra CircularProgressIndicator mientras carga
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return SizedBox(
+                                height: 100,
+                                width: 100,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            (loadingProgress.expectedTotalBytes ?? 1)
+                                        : null,
+                                  ),
+                                ),
+                              );
                             },
+                            errorBuilder: (_, _, _) => const _ImageFallbackSecondaryArticle(),
                           )
                         : const _ImageFallbackSecondaryArticle(),
                   ),

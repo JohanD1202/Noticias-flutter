@@ -1,24 +1,109 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:noticias/presentation/delegates/search_new_delegate.dart';
-import 'package:noticias/presentation/providers/search/search_articles_provider.dart';
 import '/domain/domain.dart';
 import '/presentation/providers/providers.dart';
 import '/presentation/widgets/widgets.dart';
 
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   static const name = "home-screen";
 
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final category = ref.watch(selectedCategoryProvider);
-    final articlesAsync = ref.watch(articleProvider(category));
+  HomeScreenState createState() => HomeScreenState();
+}
 
+class HomeScreenState extends ConsumerState<HomeScreen> {
+  bool _dialogShown = false;
+
+  void _showNoInternetDialog() {
+    if (_dialogShown || !mounted) return;
+    _dialogShown = true;
+
+    final textTheme = Theme.of(context);
+    final backgroundTheme = Theme.of(context).scaffoldBackgroundColor;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return AlertDialog(
+          backgroundColor: backgroundTheme,
+          title: const Text("Without Internet Connection"),
+          titleTextStyle: textTheme.textTheme.bodyLarge,
+          content: const Text("You need an internet connection to use our app."),
+          contentTextStyle: textTheme.textTheme.bodyMedium,
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+                _dialogShown = false;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _retryConnectivity();
+                });
+              },
+              child: Text("Retry", style: textTheme.textTheme.bodyMedium)
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context, rootNavigator: true).pop();
+                _dialogShown = false;
+                SystemNavigator.pop();
+              },
+              child: const Text("Go out", style: TextStyle(color: Colors.red))
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _retryConnectivity() {
+    final connectivity = ref.read(connectivityStatusProvider).value;
+    if(connectivity != ConnectivityResult.none) {
+      ref.invalidate(articleProvider(ref.read(selectedCategoryProvider)));
+    } else {
+      _showNoInternetDialog();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    ref.listen<AsyncValue<ConnectivityResult>>(
+      connectivityStatusProvider,
+      (previous, next) {
+        next.whenData((status) {
+          if (status == ConnectivityResult.none) {
+            _showNoInternetDialog();
+          }
+        });
+      },
+    );
+    
+    final connectivity = ref.watch(connectivityStatusProvider).maybeWhen(
+      data: (status) => status,
+      orElse: () => ConnectivityResult.wifi,
+    );
+    final isOffline = connectivity == ConnectivityResult.none;
+
+    final category = ref.watch(selectedCategoryProvider);
+    final articlesAsync = isOffline
+      ? const AsyncValue<List<Article>>.data([])
+      : ref.watch(articleProvider(category));
+
+
+    if (isOffline) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _showNoInternetDialog();
+      });
+    }
     final styleTitle = Theme.of(context).textTheme.titleLarge?.copyWith(
       fontWeight: FontWeight.w600,
       fontSize: 20
@@ -128,4 +213,3 @@ class HomeScreen extends ConsumerWidget {
     );
   }
 }
-

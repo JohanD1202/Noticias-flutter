@@ -5,3 +5,5 @@ export 'db/saved_articles_provider_isar.dart';
 export 'db/saved_article_actions_provider.dart';
 export 'db/saved_articles_actions.dart';
 export 'db/is_article_saved_provider.dart';
+export 'search/search_articles_provider.dart';
+export 'network/network_provider.dart';

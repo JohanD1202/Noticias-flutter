@@ -44,5 +44,4 @@ flutter:
   uses-material-design: true
 
   assets:
-    - .env
     - assets/icons/news_app_icon.png

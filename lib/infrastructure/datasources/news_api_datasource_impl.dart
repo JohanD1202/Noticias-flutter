@@ -13,6 +13,11 @@ class NewsApiDatasourceImpl extends NewsRemoteDatasource {
 
   @override
   Future<List<Article>> getArticlesByCategory(NewsCategory category) async {
+
+    if(Environment.newsApiKey.isEmpty) {
+        return [];
+    }
+
     final response = await dio.get('/top-headlines',
       queryParameters: {
         'category': category.name,

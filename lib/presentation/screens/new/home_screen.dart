@@ -98,8 +98,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
       ? const AsyncValue<List<Article>>.data([])
       : ref.watch(articleProvider(category));
 
-
-    if (isOffline) {
+    if(isOffline) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _showNoInternetDialog();
       });
@@ -133,7 +132,7 @@ class HomeScreenState extends ConsumerState<HomeScreen> {
                     searchArticles: ref.read(searchedArticlesProvider.notifier).searchArticlesByQuery
                   )
                 ).then((article) {
-                  if(article == null) return;
+                  if(!context.mounted || article == null) return;
 
                   context.push('/detail', extra: article);
                 });

@@ -5,20 +5,20 @@ import '/config/config.dart';
 
 
 class NewsApiDatasourceImpl extends NewsRemoteDatasource {
-  final dio = Dio(BaseOptions(
-    baseUrl: 'https://newsapi.org/v2',
-    queryParameters: {
-      'apiKey': Environment.newsApiKey,
-    },
-  ));
+
+  final Dio dio;
+  final String apiKey;
+
+  NewsApiDatasourceImpl(this.dio, {required this.apiKey});
 
   @override
   Future<List<Article>> getArticlesByCategory(NewsCategory category) async {
+
     final response = await dio.get('/top-headlines',
       queryParameters: {
         'category': category.name,
         'country': 'us',
-        'apiKey': Environment.newsApiKey
+        'apiKey': apiKey
       }
     );
     final List articlesJson = response.data['articles'];

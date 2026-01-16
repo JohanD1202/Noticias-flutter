@@ -38,7 +38,14 @@ La aplicación cuenta con tests reales y funcionales, enfocados en lógica y UI:
 ## Widget Tests
 - Visualización correcta de la información de las noticias cuando hay datos.
 - Comportamiento de la pantalla principal cuando no hay conexión a internet.
+- 
+# *CI/CD*
+Este proyecto cuenta con `Integración Continua (CI)` mediante `GitHub Actions`:
 
+- Ejecución automática de `tests unitarios y de widgets`.
+- Validación del código en cada `push y pull request*`.
+- Prevención de regresiones antes de integrar cambios.
+- 
 # *Arquitectura*
 - La aplicación sigue Arquitectura limpia, separando responsabilidades (Domain, Infrastructure, Presentation). Facilitando mantenibilidad, escalabilidad y testing.
 
